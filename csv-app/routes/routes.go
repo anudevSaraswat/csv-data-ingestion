@@ -16,8 +16,6 @@ func SetupRoutes() *gin.Engine {
 	engine.Use(middleware.InitDatabase())
 	engine.Use(gin.Logger())
 
-	engine.Use()
-
 	engine.GET("/user", handler.APIGetUser)
 
 	return engine
