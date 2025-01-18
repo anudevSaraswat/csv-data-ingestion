@@ -17,11 +17,16 @@ type connectInfo struct {
 	DBName   string
 }
 
+var db *sql.DB
+
 // this function provides a connection handle to postgresql database server
-// TODO:  convert this to singleton
 func ConnectToDatabase() *sql.DB {
 
 	var err error
+
+	if db != nil {
+		return db
+	}
 
 	connectInfo := connectInfo{
 		Host:     os.Getenv("PGSQL_HOST"),
@@ -38,7 +43,7 @@ func ConnectToDatabase() *sql.DB {
 	connectionString := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
 		connectInfo.Host, connectInfo.Port, connectInfo.User, connectInfo.Password, connectInfo.DBName)
 
-	db, err := sql.Open("postgres", connectionString)
+	db, err = sql.Open("postgres", connectionString)
 	if err != nil {
 		panic(err)
 	}

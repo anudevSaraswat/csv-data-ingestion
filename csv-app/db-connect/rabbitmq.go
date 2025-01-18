@@ -9,17 +9,21 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
+var connection *amqp.Connection
+
 // this function provides a connection handle to rabbit message queue service
-// TODO:  convert this to singleton
 func ConnectToMessageQueue() *amqp.Connection {
+
+	if connection != nil {
+		return connection
+	}
 
 	err := godotenv.Load("../.env")
 	if err != nil {
 		panic(err)
 	}
 
-	var mqPort int
-	mqPort, err = strconv.Atoi(os.Getenv("RMQ_PORT"))
+	mqPort, err := strconv.Atoi(os.Getenv("RMQ_PORT"))
 	if err != nil {
 		log.Default().Println("No value found for port, using default...")
 		mqPort = 5672
@@ -32,7 +36,7 @@ func ConnectToMessageQueue() *amqp.Connection {
 		Username: os.Getenv("RMQ_USER"),
 	}
 
-	connection, err := amqp.Dial(uri.String())
+	connection, err = amqp.Dial(uri.String())
 	if err != nil {
 		panic(err)
 	}
