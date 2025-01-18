@@ -8,6 +8,7 @@ import (
 
 // this function will read data from message broker's queue
 // and populate it into the PostgreSQL database
+// TODO: add the data in cache too
 func ReadAndStoreData() error {
 
 	conn := database.ConnectToMessageQueue()
