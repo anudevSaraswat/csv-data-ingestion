@@ -16,6 +16,7 @@ func ProcessCSV(ch chan<- models.User, filePath string) error {
 	}
 
 	defer file.Close()
+	defer close(ch)
 
 	csvReader := csv.NewReader(file)
 
