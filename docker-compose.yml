@@ -1,0 +1,30 @@
+services:
+  redis:
+    image: "redis/redis-stack"
+    container_name: redis-1
+
+  rabbitmq:
+    image: "rabbitmq"
+    container_name: rabbitmq-1
+    ports:
+      - "15692:15694"
+
+  postgres:
+    build: ./database
+    container_name: postgresql-1
+    env_file:
+      - .env
+
+  csv-producer:
+    build: ./csv-producer
+    depends_on:
+      - rabbitmq
+
+  csv-consumer:
+    build: ./csv-app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - rabbitmq
+      - redis
+      - postgres
