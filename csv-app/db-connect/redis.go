@@ -28,6 +28,43 @@ func ConnectToCache() *redis.Client {
 		log.Default().Println("datastore is not running...")
 	}
 
+	_, err := client.FTCreate(
+		context.TODO(),
+		"idx:users",
+		&redis.FTCreateOptions{
+			OnJSON: true,
+			Prefix: []interface{}{"user:"},
+		},
+		&redis.FieldSchema{
+			FieldName: "$.user_id",
+			As:        "user_id",
+			FieldType: redis.SearchFieldTypeText,
+		},
+		&redis.FieldSchema{
+			FieldName: "$.name",
+			As:        "name",
+			FieldType: redis.SearchFieldTypeText,
+		},
+		&redis.FieldSchema{
+			FieldName: "$.email",
+			As:        "email",
+			FieldType: redis.SearchFieldTypeText,
+		},
+		&redis.FieldSchema{
+			FieldName: "$.dob",
+			As:        "dob",
+			FieldType: redis.SearchFieldTypeText,
+		},
+		&redis.FieldSchema{
+			FieldName: "$.city",
+			As:        "city",
+			FieldType: redis.SearchFieldTypeText,
+		},
+	).Result()
+	if err != nil {
+		panic(err)
+	}
+
 	return client
 
 }
