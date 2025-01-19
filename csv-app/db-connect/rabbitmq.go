@@ -5,7 +5,6 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/joho/godotenv"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -16,11 +15,6 @@ func ConnectToMessageQueue() *amqp.Connection {
 
 	if connection != nil {
 		return connection
-	}
-
-	err := godotenv.Load("../.env")
-	if err != nil {
-		panic(err)
 	}
 
 	mqPort, err := strconv.Atoi(os.Getenv("RMQ_PORT"))
