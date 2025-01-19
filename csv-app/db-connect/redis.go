@@ -17,7 +17,7 @@ type cacheDB struct {
 }
 
 func (cdb cacheDB) IsInitialised() bool {
-	return cdb.DB == nil || cdb.SearchDB == nil
+	return cdb.DB != nil && cdb.SearchDB != nil
 }
 
 // this function provides a connection handle to redis cache service
