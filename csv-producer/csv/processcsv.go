@@ -8,9 +8,9 @@ import (
 	"os"
 )
 
-func ProcessCSV(ch chan<- models.User, filePath string) error {
+func ProcessCSV(ch chan<- models.User) error {
 
-	file, err := os.Open(filePath)
+	file, err := os.Open("users.csv")
 	if err != nil {
 		panic(err)
 	}
@@ -39,7 +39,7 @@ func ProcessCSV(ch chan<- models.User, filePath string) error {
 		}
 
 		// validate dob format
-		if ok := utils.ValidateEmail(record[3]); !ok {
+		if ok := utils.ValidateDOB(record[3]); !ok {
 			return fmt.Errorf("Invalid date of birth: %s", record[3])
 		}
 
@@ -49,6 +49,8 @@ func ProcessCSV(ch chan<- models.User, filePath string) error {
 			DOB:   record[3],
 			City:  record[4],
 		}
+
+		fmt.Println("writing to channel")
 
 		ch <- user
 
