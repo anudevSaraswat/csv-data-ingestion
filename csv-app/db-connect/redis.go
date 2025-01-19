@@ -18,7 +18,7 @@ func ConnectToCache() *redis.Client {
 	}
 
 	client = redis.NewClient(&redis.Options{
-		Addr:     os.Getenv("DB_ADDR"),
+		Addr:     os.Getenv("CACHE_ADDR"),
 		Password: "",
 		DB:       0,
 	})
