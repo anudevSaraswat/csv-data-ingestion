@@ -34,7 +34,7 @@ func ReadAndStoreData() error {
 		return err
 	}
 
-	insertSQL := `INSERT INTO users (user_id, name, email, dob, city) VALUES 
+	insertSQL := `INSERT INTO user_data (user_id, name, email, dob, city) VALUES 
 	($1, $2, $3, $4, $5);`
 
 	counter := 1
