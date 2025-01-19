@@ -31,8 +31,8 @@ func ReadAndStoreData() error {
 		return err
 	}
 
-	insertSQL := `INSERT INTO users (name, email, dob, city) VALUES 
-	(?, ?, ?, ?);`
+	insertSQL := `INSERT INTO users (user_id, name, email, dob, city) VALUES 
+	($1, $2, $3, $4, $5);`
 
 	for data := range dataChannel {
 		user := models.User{}
@@ -41,7 +41,7 @@ func ReadAndStoreData() error {
 			return err
 		}
 
-		_, err := db.Exec(insertSQL, user.Name, user.Email, user.DOB, user.City)
+		_, err := db.Exec(insertSQL, user.UserID, user.Name, user.Email, user.DOB, user.City)
 		if err != nil {
 			return err
 		}
