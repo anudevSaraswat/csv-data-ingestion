@@ -20,6 +20,8 @@ func ProcessCSV(ch chan<- models.User) error {
 
 	csvReader := csv.NewReader(file)
 
+	_, _ = csvReader.Read()
+
 	for {
 		record, err := csvReader.Read()
 		if err != nil {
@@ -49,8 +51,6 @@ func ProcessCSV(ch chan<- models.User) error {
 			DOB:   record[3],
 			City:  record[4],
 		}
-
-		fmt.Println("writing to channel")
 
 		ch <- user
 

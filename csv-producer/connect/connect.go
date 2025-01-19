@@ -5,7 +5,6 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/joho/godotenv"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
@@ -13,13 +12,8 @@ import (
 // TODO:  convert this to singleton
 func ConnectToMessageQueue() *amqp.Connection {
 
-	err := godotenv.Load(".env")
-	if err != nil {
-		panic(err)
-	}
-
 	var mqPort int
-	mqPort, err = strconv.Atoi(os.Getenv("RMQ_PORT"))
+	mqPort, err := strconv.Atoi(os.Getenv("RMQ_PORT"))
 	if err != nil {
 		log.Default().Println("No value found for port, using default...")
 		mqPort = 5672

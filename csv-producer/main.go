@@ -6,10 +6,16 @@ import (
 	"csv-producer/models"
 	"encoding/json"
 
+	"github.com/joho/godotenv"
 	"github.com/rabbitmq/amqp091-go"
 )
 
 func main() {
+
+	err := godotenv.Load(".env")
+	if err != nil {
+		panic(err)
+	}
 
 	conn := connect.ConnectToMessageQueue()
 
@@ -28,7 +34,7 @@ func main() {
 	dataChannel := make(chan models.User)
 
 	go func() {
-		err = csv.ProcessCSV(dataChannel, "./user.csv")
+		err = csv.ProcessCSV(dataChannel)
 		if err != nil {
 			panic(err)
 		}
