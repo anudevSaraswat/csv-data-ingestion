@@ -12,6 +12,7 @@ func InitDatabase() gin.HandlerFunc {
 		cache := dbconnect.ConnectToCache()
 
 		ctx.Set("db", db)
-		ctx.Set("cache", cache)
+		ctx.Set("cacheDB", cache.DB)
+		ctx.Set("cacheSearchDB", cache.SearchDB)
 	}
 }

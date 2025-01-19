@@ -4,6 +4,7 @@ import (
 	"csv-app/models"
 	"csv-app/schema"
 	"database/sql"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,6 +31,7 @@ func APIGetUser(c *gin.Context) {
 
 	users, err := schema.FetchUsers(db, payload)
 	if err != nil {
+		log.Default().Println("FetchUsers:", err)
 		c.JSON(http.StatusInternalServerError, &models.Response{
 			StatusCode:   http.StatusInternalServerError,
 			ErrorMessage: "Something went wrong",
@@ -38,7 +40,7 @@ func APIGetUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusInternalServerError, &models.Response{
+	c.JSON(http.StatusOK, &models.Response{
 		StatusCode:   http.StatusOK,
 		ErrorMessage: "",
 		Data:         users,

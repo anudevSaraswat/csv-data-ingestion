@@ -1,11 +1,12 @@
 package consumer
 
 import (
-	"context"
 	database "csv-app/db-connect"
 	"csv-app/models"
 	"encoding/json"
 	"fmt"
+
+	"github.com/RediSearch/redisearch-go/redisearch"
 )
 
 // this function will read data from message broker's queue
@@ -51,9 +52,15 @@ func ReadAndStoreData() error {
 		}
 
 		// store user json in cache
-		documentKey := fmt.Sprintf("user:%d", counter)
-		_, err = cache.JSONSet(context.Background(), documentKey, "$", user).Result()
-		if err != nil {
+		document := redisearch.NewDocument(fmt.Sprintf("user:%d", counter), 1.0)
+
+		document.Set("user_id", user.UserID)
+		document.Set("name", user.Name)
+		document.Set("email", user.Email)
+		document.Set("dob", user.DOB)
+		document.Set("city", user.City)
+
+		if err := cache.SearchDB.Index(document); err != nil {
 			return err
 		}
 

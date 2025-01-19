@@ -8,8 +8,7 @@ import (
 
 func FetchUsers(db *sql.DB, filter models.User) ([]models.User, error) {
 
-	queryStr := `SELECT name, email, dob, city FROM users
-	WHERE `
+	queryStr := `SELECT user_id, name, email, dob, city FROM user_data `
 
 	values := []interface{}{}
 	where := []string{}
@@ -40,7 +39,7 @@ func FetchUsers(db *sql.DB, filter models.User) ([]models.User, error) {
 	}
 
 	if len(where) > 0 {
-		queryStr += strings.Join(where, " AND ")
+		queryStr += "WHERE " + strings.Join(where, " AND ")
 	}
 
 	rows, err := db.Query(queryStr, values...)

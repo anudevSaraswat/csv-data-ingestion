@@ -5,66 +5,53 @@ import (
 	"log"
 	"os"
 
+	"github.com/RediSearch/redisearch-go/redisearch"
 	"github.com/redis/go-redis/v9"
 )
 
-var client *redis.Client
+var cDB = cacheDB{}
+
+type cacheDB struct {
+	DB       *redis.Client
+	SearchDB *redisearch.Client
+}
+
+func (cdb cacheDB) IsInitialised() bool {
+	return cdb.DB == nil || cdb.SearchDB == nil
+}
 
 // this function provides a connection handle to redis cache service
-func ConnectToCache() *redis.Client {
+func ConnectToCache() cacheDB {
 
-	if client != nil {
-		return client
+	if cDB.IsInitialised() {
+		return cDB
 	}
 
-	client = redis.NewClient(&redis.Options{
+	cDB.DB = redis.NewClient(&redis.Options{
+		Network:  "tcp",
 		Addr:     os.Getenv("CACHE_ADDR"),
 		Password: "",
 		DB:       0,
 	})
 
-	status := client.Ping(context.TODO())
+	status := cDB.DB.Ping(context.TODO())
 	if status.Val() != "PONG" {
 		log.Default().Println("datastore is not running...")
 	}
 
-	_, err := client.FTCreate(
-		context.TODO(),
-		"idx:users",
-		&redis.FTCreateOptions{
-			OnJSON: true,
-			Prefix: []interface{}{"user:"},
-		},
-		&redis.FieldSchema{
-			FieldName: "$.user_id",
-			As:        "user_id",
-			FieldType: redis.SearchFieldTypeText,
-		},
-		&redis.FieldSchema{
-			FieldName: "$.name",
-			As:        "name",
-			FieldType: redis.SearchFieldTypeText,
-		},
-		&redis.FieldSchema{
-			FieldName: "$.email",
-			As:        "email",
-			FieldType: redis.SearchFieldTypeText,
-		},
-		&redis.FieldSchema{
-			FieldName: "$.dob",
-			As:        "dob",
-			FieldType: redis.SearchFieldTypeText,
-		},
-		&redis.FieldSchema{
-			FieldName: "$.city",
-			As:        "city",
-			FieldType: redis.SearchFieldTypeText,
-		},
-	).Result()
-	if err != nil {
+	cDB.SearchDB = redisearch.NewClient(os.Getenv("CACHE_ADDR"), "idx:users")
+
+	schema := redisearch.NewSchema(redisearch.DefaultOptions).
+		AddField(redisearch.NewTextField("user_id")).
+		AddField(redisearch.NewTextField("name")).
+		AddField(redisearch.NewTextField("email")).
+		AddField(redisearch.NewTextField("dob")).
+		AddField(redisearch.NewTextField("city"))
+
+	if err := cDB.SearchDB.CreateIndex(schema); err != nil {
 		panic(err)
 	}
 
-	return client
+	return cDB
 
 }
