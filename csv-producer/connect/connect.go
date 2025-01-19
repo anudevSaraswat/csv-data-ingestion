@@ -30,6 +30,7 @@ func ConnectToMessageQueue() *amqp.Connection {
 		Host:     os.Getenv("RMQ_HOST"),
 		Port:     mqPort,
 		Username: os.Getenv("RMQ_USER"),
+		Password: os.Getenv("RMQ_PASSWORD"),
 	}
 
 	connection, err := amqp.Dial(uri.String())
