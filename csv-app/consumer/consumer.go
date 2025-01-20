@@ -34,8 +34,8 @@ func ReadAndStoreData() error {
 		return err
 	}
 
-	insertSQL := `INSERT INTO user_data (user_id, name, email, dob, city) VALUES 
-	($1, $2, $3, $4, $5);`
+	insertSQL := `INSERT INTO user_data (user_id, first_name, last_name, sex, email, phone, dob, job_title) VALUES 
+	($1, $2, $3, $4, $5, $6, $7, $8);`
 
 	counter := 1
 	for data := range dataChannel {
@@ -45,9 +45,9 @@ func ReadAndStoreData() error {
 			return err
 		}
 
-		fmt.Println("user:", user)
+		fmt.Printf("user-%d:%v\n", counter, user)
 		// insert user record into the database
-		_, err := db.Exec(insertSQL, user.UserID, user.Name, user.Email, user.DOB, user.City)
+		_, err := db.Exec(insertSQL, user.UserID, user.FirstName, user.LastName, user.Sex, user.Email, user.Phone, user.DOB, user.JobTitle)
 		if err != nil {
 			return err
 		}
@@ -56,10 +56,13 @@ func ReadAndStoreData() error {
 		document := redisearch.NewDocument(fmt.Sprintf("user:%d", counter), 1.0)
 
 		document.Set("user_id", user.UserID)
-		document.Set("name", user.Name)
+		document.Set("first_name", user.FirstName)
+		document.Set("last_name", user.LastName)
+		document.Set("sex", user.Sex)
 		document.Set("email", user.Email)
+		document.Set("phone", user.Phone)
 		document.Set("dob", user.DOB)
-		document.Set("city", user.City)
+		document.Set("job_title", user.JobTitle)
 
 		if err := cache.SearchDB.Index(document); err != nil {
 			return err

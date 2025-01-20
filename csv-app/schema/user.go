@@ -8,7 +8,7 @@ import (
 
 func FetchUsers(db *sql.DB, filter models.User) ([]models.User, error) {
 
-	queryStr := `SELECT user_id, name, email, dob, city FROM user_data `
+	queryStr := `SELECT user_id, first_name, last_name, sex, email, phone, dob, job_title FROM user_data `
 
 	values := []interface{}{}
 	where := []string{}
@@ -18,24 +18,38 @@ func FetchUsers(db *sql.DB, filter models.User) ([]models.User, error) {
 		values = append(values, filter.UserID)
 	}
 
-	if filter.Name != "" {
-		where = append(where, ` name LIKE CONCAT('%%', $2, '%%') `)
-		values = append(values, filter.Name)
+	if filter.FirstName != "" {
+		where = append(where, ` first_name LIKE CONCAT('%%', $2, '%%') `)
+		values = append(values, filter.FirstName)
+	}
+
+	if filter.LastName != "" {
+		where = append(where, ` last_name LIKE CONCAT('%%', $3, '%%') `)
+		values = append(values, filter.LastName)
+	}
+
+	if filter.Sex != "" {
+		where = append(where, ` sex = $4 `)
+		values = append(values, filter.Sex)
 	}
 
 	if filter.Email != "" {
-		where = append(where, ` email = $3 `)
+		where = append(where, ` email = $5 `)
 		values = append(values, filter.Email)
+	}
+	if filter.Phone != "" {
+		where = append(where, ` phone = $6 `)
+		values = append(values, filter.Phone)
 	}
 
 	if filter.DOB != "" {
-		where = append(where, ` dob = $4 `)
+		where = append(where, ` dob = $7 `)
 		values = append(values, filter.DOB)
 	}
 
-	if filter.City != "" {
-		where = append(where, ` city LIKE CONCAT('%%', $5, '%%') `)
-		values = append(values, filter.City)
+	if filter.JobTitle != "" {
+		where = append(where, ` job_title LIKE CONCAT('%%', $8, '%%') `)
+		values = append(values, filter.JobTitle)
 	}
 
 	if len(where) > 0 {
@@ -50,7 +64,8 @@ func FetchUsers(db *sql.DB, filter models.User) ([]models.User, error) {
 	users := []models.User{}
 	for rows.Next() {
 		user := models.User{}
-		err = rows.Scan(&user.UserID, &user.Name, &user.Email, &user.DOB, &user.City)
+		err = rows.Scan(&user.UserID, &user.FirstName, &user.LastName, &user.Sex,
+			&user.Email, &user.Phone, &user.DOB, &user.JobTitle)
 		if err != nil {
 			return nil, err
 		}
