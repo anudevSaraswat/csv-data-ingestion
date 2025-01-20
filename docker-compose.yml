@@ -7,7 +7,13 @@ services:
     image: "rabbitmq"
     container_name: rabbitmq-1
     ports:
-      - "15692:15694"
+      - "15694:15692"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:15692/" ]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
 
   postgres:
     build: ./database
