@@ -3,6 +3,7 @@ package schema
 import (
 	"csv-app/models"
 	"database/sql"
+	"fmt"
 	"log"
 	"strings"
 )
@@ -20,36 +21,36 @@ func FetchUsers(db *sql.DB, filter models.User) ([]models.User, error) {
 	}
 
 	if filter.FirstName != "" {
-		where = append(where, ` first_name LIKE CONCAT('%%', $2, '%%') `)
+		where = append(where, ` first_name LIKE `+fmt.Sprintf("$%d", len(where)+1))
 		values = append(values, filter.FirstName)
 	}
 
 	if filter.LastName != "" {
-		where = append(where, ` last_name LIKE CONCAT('%%', $3, '%%') `)
+		where = append(where, ` last_name LIKE `+fmt.Sprintf("$%d", len(where)+1))
 		values = append(values, filter.LastName)
 	}
 
 	if filter.Sex != "" {
-		where = append(where, ` sex = $4 `)
+		where = append(where, ` sex = `+fmt.Sprintf("$%d", len(where)+1))
 		values = append(values, filter.Sex)
 	}
 
 	if filter.Email != "" {
-		where = append(where, ` email = $5 `)
+		where = append(where, ` email = `+fmt.Sprintf("$%d", len(where)+1))
 		values = append(values, filter.Email)
 	}
 	if filter.Phone != "" {
-		where = append(where, ` phone = $6 `)
+		where = append(where, ` phone = `+fmt.Sprintf("$%d", len(where)+1))
 		values = append(values, filter.Phone)
 	}
 
 	if filter.DOB != "" {
-		where = append(where, ` dob = $7 `)
+		where = append(where, ` dob = `+fmt.Sprintf("$%d", len(where)+1))
 		values = append(values, filter.DOB)
 	}
 
 	if filter.JobTitle != "" {
-		where = append(where, ` job_title LIKE CONCAT('%%', $8, '%%') `)
+		where = append(where, ` job_title LIKE `+fmt.Sprintf("$%d", len(where)+1))
 		values = append(values, filter.JobTitle)
 	}
 
