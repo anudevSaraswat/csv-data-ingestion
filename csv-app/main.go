@@ -3,6 +3,7 @@ package main
 import (
 	"csv-app/routes"
 	"fmt"
+	"log"
 	"os"
 
 	"csv-app/consumer"
@@ -14,7 +15,7 @@ func main() {
 
 	err := godotenv.Load(".env")
 	if err != nil {
-		panic(err)
+		log.Fatalf("failed to load env file...")
 	}
 
 	engine := routes.SetupRoutes()

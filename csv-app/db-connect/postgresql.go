@@ -3,6 +3,7 @@ package dbconnect
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 
@@ -37,7 +38,8 @@ func ConnectToDatabase() *sql.DB {
 
 	connectInfo.Port, err = strconv.Atoi(os.Getenv("PGSQL_PORT"))
 	if err != nil {
-		panic(err)
+		// use default
+		connectInfo.Port = 5432
 	}
 
 	connectionString := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
@@ -45,6 +47,7 @@ func ConnectToDatabase() *sql.DB {
 
 	db, err = sql.Open("postgres", connectionString)
 	if err != nil {
+		log.Fatalln("(ConnectToDatabase) err in sql.Open:", err)
 		panic(err)
 	}
 

@@ -5,6 +5,7 @@ import (
 	"csv-producer/utils"
 	"encoding/csv"
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -12,7 +13,7 @@ func ProcessCSV(ch chan<- models.User) error {
 
 	file, err := os.Open("people-10000.csv")
 	if err != nil {
-		panic(err)
+		log.Fatalln("(ProcessCSV) err in os.Open:", err)
 	}
 
 	defer file.Close()
@@ -29,7 +30,8 @@ func ProcessCSV(ch chan<- models.User) error {
 			if err.Error() == "EOF" {
 				break
 			}
-			return fmt.Errorf("failed to read csv row: %s", err.Error())
+			log.Println("(ProcessCSV) err in csv.Reader:", err)
+			return err
 		}
 
 		if len(record) < 5 {

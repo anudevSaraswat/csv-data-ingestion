@@ -2,7 +2,6 @@ package dbconnect
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 
@@ -37,7 +36,7 @@ func ConnectToCache() cacheDB {
 
 	status := cDB.DB.Ping(context.TODO())
 	if status.Val() != "PONG" {
-		log.Default().Println("datastore is not running...")
+		log.Fatalln("cache service is not running...")
 	}
 
 	cDB.SearchDB = redisearch.NewClient(os.Getenv("CACHE_ADDR"), "idx:users")
@@ -50,7 +49,7 @@ func ConnectToCache() cacheDB {
 		AddField(redisearch.NewTextField("city"))
 
 	if err := cDB.SearchDB.CreateIndex(schema); err != nil {
-		fmt.Println(err)
+		log.Fatalln("(ConnectToCache) err in cDB.SearchDB.CreateIndex:", err)
 	}
 
 	return cDB

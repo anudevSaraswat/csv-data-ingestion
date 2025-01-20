@@ -6,6 +6,7 @@ import (
 	"csv-producer/models"
 	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/joho/godotenv"
 	"github.com/rabbitmq/amqp091-go"
@@ -15,7 +16,7 @@ func main() {
 
 	err := godotenv.Load(".env")
 	if err != nil {
-		panic(err)
+		log.Fatalln("failed to load env file...")
 	}
 
 	conn := connect.ConnectToMessageQueue()
@@ -24,12 +25,12 @@ func main() {
 
 	mqChannel, err := conn.Channel()
 	if err != nil {
-		panic(err)
+		log.Fatalln("(main) err in conn.Channel:", err)
 	}
 
 	queue, err := mqChannel.QueueDeclare("users", false, false, false, false, nil)
 	if err != nil {
-		panic(err)
+		log.Fatalln("(main) err in mqChannel.QueueDeclare:", err)
 	}
 
 	dataChannel := make(chan models.User)
@@ -37,7 +38,7 @@ func main() {
 	go func() {
 		err = csv.ProcessCSV(dataChannel)
 		if err != nil {
-			panic(err)
+			log.Fatalln("(main) err in csv.ProcessCSV:", err)
 		}
 	}()
 
@@ -46,7 +47,8 @@ func main() {
 	for user := range dataChannel {
 		by, err := json.Marshal(user)
 		if err != nil {
-			panic(err)
+			log.Printf("(main) err in json.Marshal for user %s:\n", user.FirstName)
+			continue
 		}
 
 		err = mqChannel.Publish(
@@ -60,7 +62,8 @@ func main() {
 			},
 		)
 		if err != nil {
-			panic(err)
+			log.Printf("(main) err in mqChannel.Publish for user %s:\n", user.FirstName)
+			continue
 		}
 
 		counter++

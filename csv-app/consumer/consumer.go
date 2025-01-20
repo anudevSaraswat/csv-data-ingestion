@@ -5,6 +5,7 @@ import (
 	"csv-app/models"
 	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/RediSearch/redisearch-go/redisearch"
 )
@@ -21,16 +22,19 @@ func ReadAndStoreData() error {
 
 	channel, err := conn.Channel()
 	if err != nil {
+		log.Println("(ReadAndStoreData) err in conn.Channel:", err)
 		return err
 	}
 
 	queue, err := channel.QueueDeclare("users", false, false, false, false, nil)
 	if err != nil {
+		log.Println("(ReadAndStoreData) err in channel.QueueDeclare:", err)
 		return err
 	}
 
 	dataChannel, err := channel.Consume(queue.Name, "", false, false, false, false, nil)
 	if err != nil {
+		log.Println("(ReadAndStoreData) err in channel.Consume:", err)
 		return err
 	}
 
@@ -42,6 +46,7 @@ func ReadAndStoreData() error {
 		user := models.User{}
 		err = json.Unmarshal(data.Body, &user)
 		if err != nil {
+			log.Println("(ReadAndStoreData) err in json.Unmarshal:", err)
 			return err
 		}
 
@@ -49,6 +54,7 @@ func ReadAndStoreData() error {
 		// insert user record into the database
 		_, err := db.Exec(insertSQL, user.UserID, user.FirstName, user.LastName, user.Sex, user.Email, user.Phone, user.DOB, user.JobTitle)
 		if err != nil {
+			log.Println("(ReadAndStoreData) err in db.Exec:", err)
 			return err
 		}
 
@@ -65,6 +71,7 @@ func ReadAndStoreData() error {
 		document.Set("job_title", user.JobTitle)
 
 		if err := cache.SearchDB.Index(document); err != nil {
+			log.Println("(ReadAndStoreData) err in cache.SearchDB.Index:", err)
 			return err
 		}
 

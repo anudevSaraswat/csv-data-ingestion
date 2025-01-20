@@ -1,7 +1,6 @@
 package dbconnect
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -20,7 +19,7 @@ func ConnectToMessageQueue() *amqp.Connection {
 
 	mqPort, err := strconv.Atoi(os.Getenv("RMQ_PORT"))
 	if err != nil {
-		log.Default().Println("No value found for port, using default...")
+		log.Println("No value found for port, using default...")
 		mqPort = 5672
 	}
 
@@ -34,7 +33,7 @@ func ConnectToMessageQueue() *amqp.Connection {
 
 	connection, err = amqp.Dial(uri.String())
 	if err != nil {
-		fmt.Println(err)
+		log.Fatalln("(ConnectToMessageQueue) err in amqp.Dial:", err)
 	}
 
 	return connection

@@ -3,6 +3,7 @@ package schema
 import (
 	"csv-app/models"
 	"database/sql"
+	"log"
 	"strings"
 )
 
@@ -58,6 +59,7 @@ func FetchUsers(db *sql.DB, filter models.User) ([]models.User, error) {
 
 	rows, err := db.Query(queryStr, values...)
 	if err != nil {
+		log.Println("(FetchUsers) err in db.Query:", err)
 		return nil, err
 	}
 
@@ -67,6 +69,7 @@ func FetchUsers(db *sql.DB, filter models.User) ([]models.User, error) {
 		err = rows.Scan(&user.UserID, &user.FirstName, &user.LastName, &user.Sex,
 			&user.Email, &user.Phone, &user.DOB, &user.JobTitle)
 		if err != nil {
+			log.Println("(FetchUsers) err in rows.Scan:", err)
 			return nil, err
 		}
 
