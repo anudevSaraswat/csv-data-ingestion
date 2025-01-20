@@ -8,4 +8,7 @@ RUN go mod download && go mod verify
 COPY . .
 RUN go build -v -o /usr/local/bin/app
 
-CMD ["app"]
+COPY wait-for-it.sh /usr/wait-for-it.sh
+RUN chmod +x /usr/wait-for-it.sh
+
+CMD ["/bin/bash", "-c", "/usr/wait-for-it.sh --timeout=0 rabbitmq:5672 && app"]

@@ -9,4 +9,7 @@ COPY . .
 RUN go build -v -o /usr/local/bin/app
 COPY people-10000.csv /usr/local/bin/
 
-CMD ["app"]
+COPY wait-for-it.sh /usr/wait-for-it.sh
+RUN chmod +x /usr/wait-for-it.sh
+
+CMD ["/bin/bash", "-c", "/usr/wait-for-it.sh --timeout=0 rabbitmq:5672 && app"]
