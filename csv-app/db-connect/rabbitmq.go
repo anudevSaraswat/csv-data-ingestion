@@ -1,6 +1,7 @@
 package dbconnect
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -33,7 +34,7 @@ func ConnectToMessageQueue() *amqp.Connection {
 
 	connection, err = amqp.Dial(uri.String())
 	if err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 
 	return connection

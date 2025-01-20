@@ -2,6 +2,7 @@ package main
 
 import (
 	"csv-app/routes"
+	"fmt"
 	"os"
 
 	"csv-app/consumer"
@@ -21,7 +22,7 @@ func main() {
 	go func() {
 		err := consumer.ReadAndStoreData()
 		if err != nil {
-			panic(err)
+			fmt.Println(err)
 		}
 	}()
 

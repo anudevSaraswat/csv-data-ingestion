@@ -22,6 +22,7 @@ func ProcessCSV(ch chan<- models.User) error {
 
 	_, _ = csvReader.Read()
 
+	counter := 1
 	for {
 		record, err := csvReader.Read()
 		if err != nil {
@@ -46,13 +47,16 @@ func ProcessCSV(ch chan<- models.User) error {
 		}
 
 		user := models.User{
-			Name:  record[1],
-			Email: record[2],
-			DOB:   record[3],
-			City:  record[4],
+			UserID: fmt.Sprintf("user-%d", counter),
+			Name:   record[1],
+			Email:  record[2],
+			DOB:    record[3],
+			City:   record[4],
 		}
 
 		ch <- user
+
+		counter++
 
 	}
 

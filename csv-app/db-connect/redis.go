@@ -2,6 +2,7 @@ package dbconnect
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 
@@ -49,7 +50,7 @@ func ConnectToCache() cacheDB {
 		AddField(redisearch.NewTextField("city"))
 
 	if err := cDB.SearchDB.CreateIndex(schema); err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 
 	return cDB

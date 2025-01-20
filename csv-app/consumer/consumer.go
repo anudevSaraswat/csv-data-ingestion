@@ -45,6 +45,7 @@ func ReadAndStoreData() error {
 			return err
 		}
 
+		fmt.Println("user:", user)
 		// insert user record into the database
 		_, err := db.Exec(insertSQL, user.UserID, user.Name, user.Email, user.DOB, user.City)
 		if err != nil {

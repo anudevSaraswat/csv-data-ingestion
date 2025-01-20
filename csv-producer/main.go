@@ -5,6 +5,7 @@ import (
 	"csv-producer/csv"
 	"csv-producer/models"
 	"encoding/json"
+	"fmt"
 
 	"github.com/joho/godotenv"
 	"github.com/rabbitmq/amqp091-go"
@@ -40,6 +41,8 @@ func main() {
 		}
 	}()
 
+	counter := 1
+
 	for user := range dataChannel {
 		by, err := json.Marshal(user)
 		if err != nil {
@@ -59,6 +62,10 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+
+		counter++
 	}
+
+	fmt.Printf("%d user records sent to message broker.\n", counter)
 
 }
